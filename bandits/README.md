@@ -8,6 +8,7 @@ Bandit tasks.
 
 The Bandit class currently implements the stationary and nonstationary generic
 multi-armed bandit tasks.
+
 	1. The stationary bandit starts with actions having means that are randomly
 	initialised from a Gaussian distribution with an initial mean and standard
 	deviation. The best action is defined based on these true mean values. The
@@ -22,6 +23,7 @@ multi-armed bandit tasks.
 
 The Player class is designed to be subclassed. Currently, five player types have
 been implemented by subclassing the Player class.
+
 	 1. RandomPlayer: No computer learning involved, a random action is taken.
 
 	 2. HumanPlayer: No computer learning involved, takes user input as the

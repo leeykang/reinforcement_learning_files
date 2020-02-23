@@ -1,3 +1,12 @@
+"""
+Copyright Declaration (C)
+From: https://github.com/leeykang/
+Use and modification of information, comment(s) or code provided in this document
+is granted if and only if this copyright declaration, located between lines 1 to
+9 of this document, is preserved at the top of any document where such
+information, comment(s) or code is/are used.
+
+"""
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
@@ -10,8 +19,12 @@ class Arena:
 	Provides the definition of an arena for Bandit(s) to be used to pit / study
 	Player(s).
 
+	Parameter(s):
+	name: Name of the Arena.
+
 	"""
-	def __init__(self):
+	def __init__(self, name):
+		self.name = name
 		self.bandits = []
 		self.players = []
 		self.num_bandits = 0
@@ -336,21 +349,37 @@ class Arena:
 					break
 
 			if run_mode == 'pit':
+				# Creates the required diagram and assigns a title to it.
+				fig, (ax1, ax2) = plt.subplots(1,2, figsize=(20, 10))
+				fig.suptitle('Bandit %i Pit Results' % (bandit_idx + 1), fontsize=30)
+
 				# For all players, visualise the average percentage of optimum
 				# actions taken (the action with the highest true reward (mean))
 				# for each timestep over all the runs of the current Bandit.
+				# This is placed in the left diagram.
 				for player_idx, player in enumerate(self.players):
-					plt.plot(range(1+first_considered_reward_step,1+num_timesteps), player.stored_optimum, label='player%i_%s' % ((player_idx+1), player.player_type))
-				plt.legend(loc="best")
-				plt.savefig(os.path.join(curr_dir, 'bandit%i_optimum.png' % (bandit_idx + 1)))
-				plt.close()
+					ax1.plot(range(1+first_considered_reward_step,1+num_timesteps), player.stored_optimum, label='player%i_%s' % ((player_idx+1), player.player_type))
 
-				# For all players, bisualise the average reward gained for each
-				# timestep over all the runs of the current Bandit.
+				# Provides the legend, title and labels of the left diagram.
+				ax1.legend(loc="best")
+				ax1.set_title('Optimum Action Percentage Averaged Across Runs (%) vs Timestep')
+				ax1.set_ylabel('Optimum Action Percentage Averaged Across Runs (%)')
+				ax1.set_xlabel('Timestep')
+
+				# For all players, visualise the average reward gained for each
+				# timestep over all the runs of the current Bandit. This is
+				# placed in the right diagram.
 				for player_idx, player in enumerate(self.players):
-					plt.plot(range(1+first_considered_reward_step,1+num_timesteps), player.stored_reward, label='player%i_%s' % ((player_idx+1), player.player_type))
-				plt.legend(loc="best")
-				plt.savefig(os.path.join(curr_dir, 'bandit%i_reward.png' % (bandit_idx + 1)))
+					ax2.plot(range(1+first_considered_reward_step,1+num_timesteps), player.stored_reward, label='player%i_%s' % ((player_idx+1), player.player_type))
+
+				# Provides the legend, title and labels of the right diagram.
+				ax2.legend(loc="best")
+				ax2.set_title('Average Run Reward vs Timestep')
+				ax2.set_ylabel('Average Run Reward')
+				ax2.set_xlabel('Timestep')
+
+				# Saves the plotted figure.
+				plt.savefig(os.path.join(curr_dir, 'bandit%i_%s_pit_results.png' % (bandit_idx + 1, self.name)))
 				plt.close()
 
 			else:
@@ -358,10 +387,20 @@ class Arena:
 				# the current Bandit.
 				for player_idx, player in enumerate(self.players):
 					plt.plot(player.study_range, player.study_result, marker='x', label='player%i_%s_%s' % ((player_idx+1), player.player_type, player.study_variable))
-				plt.legend(loc="best")
+
+				# Converts the x-axis to a logarithmic axis with base 2 and
+				# sets the x-axis range to the parameter range provided.
 				plt.xscale('log', basex=2)
 				plt.xlim(parameter_range)
-				plt.savefig(os.path.join(curr_dir, 'bandit%i_parameter_study.png' % (bandit_idx + 1)))
+
+				# Provides the legend, title and labels.
+				plt.legend(loc="best")
+				plt.title('Bandit %i Parameter Study Results' % (bandit_idx + 1), fontsize=15)
+				plt.ylabel('Average Run Reward')
+				plt.xlabel('Timestep')
+
+				# Saves the plotted figure.
+				plt.savefig(os.path.join(curr_dir, 'bandit%i_%s_parameter_study_results.png' % (bandit_idx + 1, self.name)))
 				plt.close()
 
 		print('COMPLETED ARENA IN %s MODE' % run_mode.upper())

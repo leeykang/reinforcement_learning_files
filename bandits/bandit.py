@@ -1,3 +1,12 @@
+"""
+Copyright Declaration (C)
+From: https://github.com/leeykang/
+Use and modification of information, comment(s) or code provided in this document
+is granted if and only if this copyright declaration, located between lines 1 to
+9 of this document, is preserved at the top of any document where such
+information, comment(s) or code is/are used.
+
+"""
 import numpy as np
 
 class Bandit:
